@@ -28,8 +28,24 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 import App from './views/App.vue';
+import VueRouter from 'vue-router'
+import Vue from 'vue';
+import HousesIndex from './components/HousesIndex.vue';
+import TomMap from './components/TomMap.vue';
+
+const routes = [
+    { path: '/', component: HousesIndex },
+    { path: '/map', component: TomMap },
+]
+
+const router = new VueRouter({
+    routes // short for `routes: routes`
+})
+
+Vue.use(VueRouter);
 
 const app = new Vue({
     el: '#app',
+    router,
     render: h => h(App)
 });
