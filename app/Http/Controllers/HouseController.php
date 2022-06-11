@@ -14,7 +14,7 @@ class HouseController extends Controller
      */
     public function index()
     {
-        $houses = House::all();
+        $houses = House::paginate(10);
         return response()->json($houses);
     }
 

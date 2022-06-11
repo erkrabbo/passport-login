@@ -5147,6 +5147,18 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 //
 //
 //
@@ -5170,14 +5182,59 @@ __webpack_require__.r(__webpack_exports__);
   name: 'HousesIndex',
   data: function data() {
     return {
-      houses: []
+      houses: [],
+      page: 1,
+      lastPage: 1
     };
   },
-  created: function created() {
-    var _this = this;
+  methods: {
+    getHouses: function getHouses() {
+      var _this = this;
 
-    Axios.get("/api/houses").then(function (response) {
-      _this.houses = response.data;
+      Axios.get("/api/houses?page=".concat(this.page)).then(function (response) {
+        var _this$houses;
+
+        (_this$houses = _this.houses).push.apply(_this$houses, _toConsumableArray(response.data.data));
+
+        _this.lastPage = response.data.last_page;
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    }
+  },
+  created: function created() {
+    //  console.log(this.$refs)
+    this.getHouses();
+  },
+  mounted: function mounted() {
+    var application = this; // window.onscroll = function(ev) {
+    // if ((window.innerHeight + window.scrollY + 10) >= document.body.offsetHeight) {
+    //     let anchor = window.innerHeight + window.scrollY;
+    //     console.log(application)
+    //     window.scrollY = 0;
+    //     application.page++;
+    //     application.getHouses();
+    //     // window.scrollHeight = anchor + 300;
+    //     }
+    // }
+
+    window.addEventListener('scroll', function (ev) {
+      if (window.innerHeight + window.scrollY + 1 >= document.body.offsetHeight) {
+        var anchor = window.innerHeight + window.scrollY;
+        console.log(application);
+        window.scrollTo({
+          top: anchor,
+          left: 0,
+          behavior: 'smooth'
+        });
+
+        if (application.page >= application.lastPage) {
+          return;
+        }
+
+        application.page++;
+        application.getHouses(); // window.scrollHeight = anchor + 300;
+      }
     });
   }
 });
@@ -28693,27 +28750,39 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "container" }, [
-    _c(
-      "div",
-      { staticClass: "row row-cols-4" },
-      _vm._l(_vm.houses, function (house) {
-        return _c("div", { key: house.id, staticClass: "col" }, [
-          _c("div", { staticClass: "card h-100" }, [
-            _c("img", {
-              staticClass: "card-img-top",
-              attrs: { src: house.poster, alt: "..." },
-            }),
-            _vm._v(" "),
-            _vm._m(0, true),
-            _vm._v(" "),
-            _vm._m(1, true),
-          ]),
-        ])
-      }),
-      0
-    ),
-  ])
+  return _c(
+    "div",
+    { staticClass: "container", attrs: { id: "infiniteScroll" } },
+    [
+      _c(
+        "div",
+        { staticClass: "row row-cols-4" },
+        _vm._l(_vm.houses, function (house, index) {
+          return _c(
+            "div",
+            {
+              key: house.id,
+              staticClass: "col",
+              attrs: { "data-last": index == house.length - 1 ? "1" : "0" },
+            },
+            [
+              _c("div", { staticClass: "card h-100" }, [
+                _c("img", {
+                  staticClass: "card-img-top",
+                  attrs: { src: house.poster, alt: "..." },
+                }),
+                _vm._v(" "),
+                _vm._m(0, true),
+                _vm._v(" "),
+                _vm._m(1, true),
+              ]),
+            ]
+          )
+        }),
+        0
+      ),
+    ]
+  )
 }
 var staticRenderFns = [
   function () {
