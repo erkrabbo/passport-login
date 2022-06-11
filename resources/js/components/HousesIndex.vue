@@ -1,7 +1,7 @@
 <template>
-  <div class="container" id="infiniteScroll">
+  <div class="container py-5" id="infiniteScroll">
     <div class="row row-cols-4">
-        <div class="col" v-for="(house, index) in houses" :key="house.id" :data-last = "index == house.length - 1 ? '1' : '0'" >
+        <div class="col" v-for="house in houses" :key="house.id">
             <div class="card h-100">
                 <img :src="house.poster" class="card-img-top" alt="...">
                 <div class="card-body">
@@ -13,6 +13,8 @@
                 </div>
             </div>
         </div>
+
+        <div v-if="houses.length" v-observe-visibility="handleScrolledToBottom"></div>
     </div>
   </div>
 </template>
@@ -37,41 +39,23 @@ export default {
         .catch(error => {
           console.log(error);
         });
+    },
+    handleScrolledToBottom(isVisible) {
+        if (!isVisible) {
+            return;
+        }
+      if (this.page < this.lastPage) {
+        this.page++;
+        this.getHouses();
+      }
     }
 },
   created() {
     //  console.log(this.$refs)
     this.getHouses();
   },
-  mounted() {
-    const application = this;
-    // window.onscroll = function(ev) {
-    // if ((window.innerHeight + window.scrollY + 10) >= document.body.offsetHeight) {
-    //     let anchor = window.innerHeight + window.scrollY;
-    //     console.log(application)
-    //     window.scrollY = 0;
-    //     application.page++;
-    //     application.getHouses();
-    //     // window.scrollHeight = anchor + 300;
-    //     }
-    // }
-        window.addEventListener('scroll', function(ev) {
-        if ((window.innerHeight + window.scrollY + 1) >= document.body.offsetHeight) {
-            const anchor = window.innerHeight + window.scrollY;
-            console.log(application)
-            window.scrollTo({
-                top: anchor,
-                left: 0,
-                behavior: 'smooth'
-            });
-            if (application.page >= application.lastPage) {
-                return;
-            }
-            application.page++;
-            application.getHouses();
-            // window.scrollHeight = anchor + 300;
-        }
-    });
-  }
 };
 </script>
+
+<style lang="scss" scoped>
+</style>

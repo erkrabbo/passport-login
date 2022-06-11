@@ -32,6 +32,8 @@ import VueRouter from 'vue-router'
 import Vue from 'vue';
 import HousesIndex from './components/HousesIndex.vue';
 import TomMap from './components/TomMap.vue';
+import VueObserveVisibility from 'vue-observe-visibility'
+
 
 const routes = [
     { path: '/', component: HousesIndex },
@@ -44,6 +46,7 @@ const router = new VueRouter({
 })
 
 Vue.use(VueRouter);
+Vue.use(VueObserveVisibility)
 
 const app = new Vue({
     el: '#app',
