@@ -20,14 +20,20 @@
 </template>
 
 <script>
+// import Vuex from 'vuex';
+// Vue.use(Vuex);
 export default {
   name: 'HousesIndex',
-  data() {
-    return {
-      houses : [],
-      page : 1,
-      lastPage: 1
-    };
+  computed: {
+    houses() {
+      return this.$store.state.houses;
+    },
+    page() {
+      return this.$store.state.page;
+    },
+    lastPage() {
+      return this.$store.state.lastPage;
+    }
   },
   methods: {
     getHouses() {
@@ -45,15 +51,18 @@ export default {
             return;
         }
       if (this.page < this.lastPage) {
-        this.page++;
-        this.getHouses();
+        this.$store.commit('pageIncrement');
+        this.$store.commit('search');
       }
     }
 },
   created() {
     //  console.log(this.$refs)
-    this.getHouses();
+    this.$store.commit('search');
   },
+   mounted() {
+        console.log(this.$store.state.count);
+    },
 };
 </script>
 

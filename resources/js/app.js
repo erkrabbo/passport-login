@@ -28,11 +28,13 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 import App from './views/App.vue';
+import Search from './components/Search.vue';
 import VueRouter from 'vue-router'
 import Vue from 'vue';
 import HousesIndex from './components/HousesIndex.vue';
 import TomMap from './components/TomMap.vue';
 import VueObserveVisibility from 'vue-observe-visibility'
+import Vuex from 'vuex'
 
 
 const routes = [
@@ -45,11 +47,44 @@ const router = new VueRouter({
     routes // short for `routes: routes`
 })
 
+const store = new Vuex.Store({
+    state: {
+      count: 0,
+      houses : [],
+      page : 1,
+      lastPage : 1
+
+    },
+    mutations: {
+      search (state) {
+        Axios.get(`/api/houses?page=${state.page}`)
+        .then(response => {
+          state.houses.push(...response.data.data);
+          state.lastPage = response.data.last_page;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+      },
+      pageIncrement (state) {
+        state.page++;
+      }
+    }
+  })
+
+// Vue.use(Vuex)
 Vue.use(VueRouter);
 Vue.use(VueObserveVisibility)
 
 const app = new Vue({
     el: '#app',
     router,
+    store,
     render: h => h(App)
+});
+
+const search = new Vue({
+    el: '#search',
+    store,
+    render: h => h(Search)
 });
