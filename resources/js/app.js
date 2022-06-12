@@ -52,12 +52,17 @@ const store = new Vuex.Store({
       count: 0,
       houses : [],
       page : 1,
-      lastPage : 1
+      lastPage : 1,
+      s : null,
 
     },
     mutations: {
       search (state) {
-        Axios.get(`/api/houses?page=${state.page}`)
+        let baseRequest = `/api/houses?page=${state.page}`;
+        if (state.s) {
+          baseRequest += `&s=${state.s}`;
+        }
+        Axios.get(baseRequest)
         .then(response => {
           state.houses.push(...response.data.data);
           state.lastPage = response.data.last_page;
@@ -68,6 +73,11 @@ const store = new Vuex.Store({
       },
       pageIncrement (state) {
         state.page++;
+      },
+      filterSet (state, n) {
+        state.s = n;
+        state.houses = [];
+        this.commit('search');
       }
     }
   })

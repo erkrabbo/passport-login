@@ -5244,9 +5244,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 // import Vuex from 'vuex';
 // Vue.use(Vuex);
 /* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      filter: null
+    };
+  },
+  methods: {
+    research: function research() {
+      this.$store.commit('filterSet', this.filter);
+    }
+  },
   mounted: function mounted() {
     console.log(this.$store.state.count);
   }
@@ -28851,7 +28864,41 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("h1", [_vm._v("Barra cerca")])
+  return _c(
+    "form",
+    {
+      on: {
+        submit: function ($event) {
+          $event.preventDefault()
+          return _vm.research.apply(null, arguments)
+        },
+      },
+    },
+    [
+      _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.filter,
+            expression: "filter",
+          },
+        ],
+        attrs: { type: "text", placeholder: "Search..." },
+        domProps: { value: _vm.filter },
+        on: {
+          input: function ($event) {
+            if ($event.target.composing) {
+              return
+            }
+            _vm.filter = $event.target.value
+          },
+        },
+      }),
+      _vm._v(" "),
+      _c("button", [_vm._v("sub")]),
+    ]
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -45956,11 +46003,18 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_7__["default"].Store({
     count: 0,
     houses: [],
     page: 1,
-    lastPage: 1
+    lastPage: 1,
+    s: null
   },
   mutations: {
     search: function search(state) {
-      Axios.get("/api/houses?page=".concat(state.page)).then(function (response) {
+      var baseRequest = "/api/houses?page=".concat(state.page);
+
+      if (state.s) {
+        baseRequest += "&s=".concat(state.s);
+      }
+
+      Axios.get(baseRequest).then(function (response) {
         var _state$houses;
 
         (_state$houses = state.houses).push.apply(_state$houses, _toConsumableArray(response.data.data));
@@ -45972,6 +46026,11 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_7__["default"].Store({
     },
     pageIncrement: function pageIncrement(state) {
       state.page++;
+    },
+    filterSet: function filterSet(state, n) {
+      state.s = n;
+      state.houses = [];
+      this.commit('search');
     }
   }
 }); // Vue.use(Vuex)

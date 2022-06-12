@@ -7,14 +7,16 @@ use Illuminate\Http\Request;
 
 class HouseController extends Controller
 {
+    use \App\Traits\searchFilters;
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $houses = House::paginate(10);
+        $houses = $this->composeQuery($request);
+        $houses = $houses->paginate(10);
         return response()->json($houses);
     }
 
