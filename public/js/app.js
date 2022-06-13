@@ -46030,6 +46030,8 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_7__["default"].Store({
     filterSet: function filterSet(state, n) {
       state.s = n;
       state.houses = [];
+      state.page = 1;
+      state.lastPage = 1;
       this.commit('search');
     }
   }
